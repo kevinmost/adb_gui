@@ -8,7 +8,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-public class AdbDeviceView {
+public class AdbDevicesView {
   public static final String TITLE = "ADB Devices";
 
   private final JFrame frame = new JFrame(TITLE);
@@ -16,7 +16,7 @@ public class AdbDeviceView {
   private final MigLayout contentLayout = new MigLayout();
   private final JPanel content = new JPanel(contentLayout, true);
 
-  public AdbDeviceView() {
+  public AdbDevicesView() {
     frame.getContentPane().setLayout(new BorderLayout());
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.add(content, BorderLayout.CENTER);
