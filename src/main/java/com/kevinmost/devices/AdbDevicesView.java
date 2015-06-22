@@ -1,50 +1,40 @@
 package com.kevinmost.devices;
 
-import net.miginfocom.swing.MigLayout;
+import com.kevinmost.AdbGuiView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
-public class AdbDevicesView {
-  public static final String TITLE = "ADB Devices";
+public class AdbDevicesView implements AdbGuiView<List<AdbDevice>, JMenu> {
 
-  private final JFrame frame = new JFrame(TITLE);
+    private final JMenu content = new JMenu("pls");
 
-  private final MigLayout contentLayout = new MigLayout();
-  private final JPanel content = new JPanel(contentLayout, true);
-
-  public AdbDevicesView() {
-    frame.getContentPane().setLayout(new BorderLayout());
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    frame.add(content, BorderLayout.CENTER);
-  }
-
-  public void updateFromModel(List<AdbDevice> devices) {
-    content.removeAll();
-    for (AdbDevice device : devices) {
-      addRow(device);
+    @Override
+    public void updateFromModel(List<AdbDevice> devices) {
+        content.removeAll();
+        for (AdbDevice device : devices) {
+            addRow(device);
+        }
     }
-    if (!frame.isVisible()) {
-      frame.setVisible(true);
-      frame.pack();
-    }
-    frame.revalidate();
-    frame.repaint();
-  }
 
-  private void addRow(AdbDevice device) {
-    final String[] fields = device.asOrderedArray();
-    for (int i = 0; i < fields.length; i++) {
-      final Component column = new JLabel(fields[i]);
-      // The last column has a "wrap" attribute to denote the end of a row.
-      if (i == fields.length - 1) {
-        content.add(column, "wrap");
-      } else {
-        content.add(column, "growx");
-      }
+    private void addRow(AdbDevice device) {
+        final String[] fields = device.asOrderedArray();
+        for (String field : fields) {
+            final Component deviceView = new JMenuItem(field);
+            content.add(deviceView);
+        }
     }
-  }
+
+    @Override
+    public void addToContainer(Container container) {
+        container.add(content);
+        container.invalidate();
+        container.repaint();
+    }
+
+    @Override
+    public JMenu getView() {
+        return content;
+    }
 }

@@ -1,41 +1,44 @@
 package com.kevinmost.devices;
 
 import com.kevinmost.Controller;
-import com.kevinmost.command.CommandExecutor;
-import com.kevinmost.command.TerminalCommand;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 public class AdbDevicesController extends Controller<AdbDevicesModel, AdbDevicesView> {
 
-  public static final int ADB_DEVICES_UPDATE_FREQUENCY_MS = 500;
+    public AdbDevicesController(AdbDevicesModel model, AdbDevicesView view) {
+        super(model, view);
+        view.getView().addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                getActionListener().actionPerformed(null);
+            }
 
-  public AdbDevicesController(AdbDevicesModel model, AdbDevicesView view) {
-    super(model, view);
-    final Timer timer = new Timer(ADB_DEVICES_UPDATE_FREQUENCY_MS, getActionListener());
-    timer.setRepeats(true);
-    timer.start();
-  }
+            @Override
+            public void menuDeselected(MenuEvent e) {}
 
-  @Override
-  protected ActionListener getActionListener() {
-    return new ActionListener() {
-      @Override
-      public void actionPerformed(@NotNull ActionEvent e) {
-        final List<AdbDevice> newModel = getDevices();
-        model.setDevices(newModel);
-        view.updateFromModel(newModel);
-      }
-    };
-  }
+            @Override
+            public void menuCanceled(MenuEvent e) {}
+        });
+    }
 
-  private static List<AdbDevice> getDevices() {
-    final TerminalCommand<List<AdbDevice>> transformer = new AdbDevicesTerminalCommand();
-    return CommandExecutor.executeCommand(transformer);
-  }
+    @Override
+    protected ActionListener getActionListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final List<AdbDevice> newModelData = getDevices();
+                model.setDevices(newModelData);
+                view.updateFromModel(newModelData);
+            }
+        };
+    }
 
+    private List<AdbDevice> getDevices() {
+        return new AdbDevicesCommand().execute();
+    }
 }

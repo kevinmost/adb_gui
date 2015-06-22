@@ -1,6 +1,8 @@
 package com.kevinmost;
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.awt.OSInfo;
 
 import java.io.InputStream;
@@ -10,9 +12,11 @@ import java.net.URL;
 import java.util.Locale;
 
 public class PlatformDetails {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformDetails.class);
     private static PlatformDetails INSTANCE;
 
-    public static @NotNull PlatformDetails get() {
+    @NotNull
+    public static PlatformDetails get() {
         if (INSTANCE == null) {
             INSTANCE = new PlatformDetails();
         }
@@ -39,9 +43,10 @@ public class PlatformDetails {
             case MACOSX:
                 return "mac";
             case LINUX:
-                return "linux";
+                break;
+            default:
+                LOGGER.warn("This OS is not supported, will try Linux ADB implementation anyway");
         }
-        throw new IllegalStateException("Unknown OS; only Windows, Mac, and Linux supported");
+        return "linux";
     }
-
 }
